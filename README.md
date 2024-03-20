@@ -490,3 +490,20 @@ blkid /dev/sdc - Посмотреть UUID диска sdb
 vim /etc/fstab - Внизу прописать: /dev/stripped_vg/stripped_lv /opt/data ext4 defaults 0 0
 cryptsetup status crypt_sdb - Статус диска
 cryptsetup status crypt_sdc - Статус диска
+
+
+############DHCP##########
+
+после команды в роутере ip dhcp-server обязательно пишем do com; do con
+
+Настройка на rtr-br
+configure terminal
+ip dhcp-server pool COMPANY-HQ
+network 10.0.20.32/27
+default-lease-time 3:00:00
+address-range 10.0.20.33-10.0.20.62
+excluded-address-range 10.0.20.33                      
+default-router 10.0.20.33 
+dns-server 10.0.10.2
+domain-name company.prof
+exit
