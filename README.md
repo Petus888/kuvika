@@ -1,3 +1,4 @@
+| less добавляем к команде когда надо что-то проскролить и посмотреть
 ############ RTR-HQ ###############
 
 configure
@@ -491,14 +492,39 @@ vim /etc/fstab - Внизу прописать: /dev/stripped_vg/stripped_lv /op
 cryptsetup status crypt_sdb - Статус диска
 cryptsetup status crypt_sdc - Статус диска
 
+вот там где "Шифрование тома с помощью ключа:" ставим огромные YES
 
-############DHCP##########
+################ Настройка баз данных (делаем все по мужику, до момента репликации) SRV-HQ ################
+
+Вот там где "Настройка аутентификации для удаленного доступа:"
+пишем команду vim /var/lib/pgsql/data/pg_hba.conf И md5 НЕ СТАВИМ!!!!! Там у него в скрине есть, но потом
+будет просить пароль если не поставить везде trust
+последний ip ставим 10.0.20.0/24 trust в конце
+Перезапускаем и далее снова по мужику:
+systemctl restart postgresql
+
+################ Настройка HAPROXY на sw-hq ################
+
+apt-get update
+apt-get install haproxy
+systemctl start haproxy
+systemctl enable --now haproxy
+Проверим haproxy:
+systemctl status haproxy
+Создадим резервную копию конфигурационного файла:
+cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak
+Откроем конф. файл:
+vim /etc/haproxy/haproxy.cfg
+далее по фото с вк и потом systemctl restart haproxy
+
+############DHCP#####
+#####
 
 после команды в роутере ip dhcp-server обязательно пишем do com; do con
 
 Настройка на rtr-br
 configure terminal
-ip dhcp-server pool COMPANY-HQ
+ip dhcp-server pool COMPANY-BR
 network 10.0.20.32/27
 default-lease-time 3:00:00
 address-range 10.0.20.33-10.0.20.62
@@ -507,3 +533,18 @@ default-router 10.0.20.33
 dns-server 10.0.10.2
 domain-name company.prof
 exit
+ip dhcp-server
+
+########## Настройка DNS для SRV-HQ и SRV-BR ##########
+
+	Тут я привел текстовый формат из скриншотов в 7 пункте
+	в различных файлах для простой вставки в дальнейшем
+
+
+
+##########Терраформ#########
+https://cloud.vk.com/docs/manage/tools-for-using-services/terraform/quick-start?ysclid=ltzr3sf3f136577636#937-tabpanel-0
+
+https://netcrash.wordpress.com/2022/04/15/esxi-7-terraform-no-vcenter/
+
+https://github.com/josenk/terraform-provider-esxi/blob/master/README.md
