@@ -536,7 +536,10 @@ exit
 ip dhcp-server
 
 ########## Настройка DNS для SRV-HQ и SRV-BR ##########
-
+в файле  /etc/net/ifaces/ens192/resolv.conf добавляем:
+search company.prof
+nameserver 10.0.10.2
+nameserver 10.0.20.2
 	Тут я привел текстовый формат из скриншотов в 7 пункте
 	в различных файлах для простой вставки в дальнейшем
 
